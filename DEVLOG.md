@@ -20,8 +20,6 @@
 - S3 lifecycle rule を追加（旧バージョンを 90 日で自動削除。Free Tier の容量節約）
 - bootstrap README に ⚠️ ローカル State の保管方法を追記
 
-## 2026-05-06
-
 ### Terraform Remote State 用 bootstrap リソースを作成
 
 - `bootstrap/` ディレクトリに S3 バケット + DynamoDB テーブルの Terraform コードを追加
