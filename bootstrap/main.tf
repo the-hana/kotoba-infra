@@ -17,15 +17,15 @@ provider "aws" {
 resource "aws_s3_bucket" "tfstate" {
   bucket = var.tfstate_bucket_name
 
-  # 誤って destroy しても State が消えないよう保護
-  lifecycle {
-    prevent_destroy = true
-  }
-
   tags = {
     project = "kotoba-ai"
     env     = "prod"
     purpose = "terraform-state"
+  }
+
+  # 誤って destroy しても State が消えないよう保護
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
@@ -60,9 +60,14 @@ resource "aws_s3_bucket_public_access_block" "tfstate" {
 resource "aws_s3_bucket_lifecycle_configuration" "tfstate" {
   bucket = aws_s3_bucket.tfstate.id
 
+  # バージョニング有効化を待ってから適用
+  depends_on = [aws_s3_bucket_versioning.tfstate]
+
   rule {
     id     = "expire-old-versions"
     status = "Enabled"
+
+    filter {}  # 全オブジェクト対象（省略すると perpetual diff が発生するため明示）
 
     noncurrent_version_expiration {
       noncurrent_days = 90
@@ -81,14 +86,14 @@ resource "aws_dynamodb_table" "tfstate_lock" {
     type = "S"
   }
 
-  # 誤って destroy しても Lock テーブルが消えないよう保護
-  lifecycle {
-    prevent_destroy = true
-  }
-
   tags = {
     project = "kotoba-ai"
     env     = "prod"
     purpose = "terraform-state-lock"
+  }
+
+  # 誤って destroy しても Lock テーブルが消えないよう保護
+  lifecycle {
+    prevent_destroy = true
   }
 }

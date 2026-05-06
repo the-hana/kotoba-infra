@@ -2,6 +2,12 @@
 
 ## 2026-05-06
 
+### bootstrap 追加レビュー指摘を修正
+
+- `aws_s3_bucket_lifecycle_configuration` に `filter {}` を追加（省略すると perpetual diff が発生するため明示）
+- 同リソースに `depends_on = [aws_s3_bucket_versioning.tfstate]` を追加（バージョニング有効化前にlifecycle ruleが適用されるレースコンディションを防止）
+- `lifecycle { prevent_destroy }` ブロックをリソース末尾へ移動（Terraform コミュニティ慣例）
+
 ### bootstrap のコードレビュー指摘を修正
 
 - `.gitignore` に Terraform 標準除外項目を追加（`.terraform/`, `*.tfstate`, `*.tfvars` 等）
