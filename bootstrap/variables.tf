@@ -5,9 +5,9 @@ variable "aws_region" {
 }
 
 variable "tfstate_bucket_name" {
-  description = "Terraform state 保存用 S3 バケット名"
+  description = "Terraform state 保存用 S3 バケット名（S3はグローバル一意。AWSアカウントIDの下6桁などを末尾に付けること）"
   type        = string
-  default     = "kotoba-ai-tfstate"
+  # defaultなし → terraform apply時に terraform.tfvars で必ず明示する
 }
 
 variable "tfstate_lock_table_name" {
