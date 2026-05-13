@@ -1,0 +1,11 @@
+# このファイルをコピーして terraform.tfvars を作成する
+# terraform.tfvars は .gitignore 対象 — コミット禁止
+#
+# cp terraform.tfvars.example terraform.tfvars
+
+aws_region     = "ap-northeast-1"
+db_password    = "your-db-password"         # 16文字以上推奨
+jwt_secret     = "your-64-char-jwt-secret"  # 64文字以上推奨
+gemini_api_key = "your-gemini-api-key"
+alert_email    = "your@email.com"
+github_org     = "butahana"
