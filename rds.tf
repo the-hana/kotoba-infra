@@ -37,6 +37,10 @@ resource "aws_db_instance" "main" {
   backup_retention_period      = 0
   performance_insights_enabled = false
 
+  lifecycle {
+    ignore_changes = [password]
+  }
+
   tags = merge(local.common_tags, { Name = "kotoba-rds" })
 }
 

@@ -173,7 +173,7 @@ resource "aws_ecs_service" "api" {
 
   # CD パイプラインが task_definition を更新した後に Terraform が旧 revision に戻すのを防ぐ
   lifecycle {
-    ignore_changes = [task_definition]
+    ignore_changes = [task_definition, desired_count]
   }
 
   tags = local.common_tags
