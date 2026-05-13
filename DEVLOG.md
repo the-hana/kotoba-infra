@@ -2,6 +2,19 @@
 
 ## 2026-05-13
 
+### Compute + DB リソース追加 (PR 3)
+
+- `rds.tf`: DB Subnet Group + RDS db.t3.micro (PostgreSQL 16, 20GB) + DATABASE_URL を SSM に保存
+  - `publicly_accessible=false` でセキュリティと費用を同時に最適化（NAT Gateway 不要）
+  - `backup_retention_period=0` で Free Tier の 20GB バックアップ上限を超えないよう設定
+  - `urlencode()` で DATABASE_URL のパスワード特殊文字をエスケープ
+- `ecs.tf`: EC2 Instance Role + ECS Cluster + Task Definition + EC2 t2.micro + ECS Service
+  - ECS ホスト EC2 に swap 1.5GB を `fallocate` で作成し `/etc/fstab` で永続化（t2.micro OOM 防止）
+  - `deployment_minimum_healthy_percent=0`: t2.micro 1 台での rolling update を可能にするトレードオフ
+  - `RAILS_LOG_TO_STDOUT=true` を Task Definition に設定し CloudWatch Logs へ直接転送
+  - Elastic IP 不使用（中止時 IP 自動解放、費用ゼロ）
+- `variables.tf`: `db_name` / `db_username` 変数を追加（デフォルト値あり）
+
 ### メイン Terraform 基盤ファイル群を追加 (PR 2)
 
 - `versions.tf` / `backend.tf` / `variables.tf` / `locals.tf` / `networking.tf` / `ecr.tf` / `iam.tf` / `ssm.tf` / `terraform.tfvars.example` を新規作成
