@@ -1,5 +1,25 @@
 # DEVLOG — kotoba-infra
 
+## 2026-05-13
+
+### メイン Terraform 基盤ファイル群を追加 (PR 2)
+
+- `versions.tf` / `backend.tf` / `variables.tf` / `locals.tf` / `networking.tf` / `ecr.tf` / `iam.tf` / `ssm.tf` / `terraform.tfvars.example` を新規作成
+
+**ネットワーク設計**
+- VPC 10.0.0.0/16 + Public Subnet ×2 (1a / 1c)。NAT Gateway を意図的に排除し Public Subnet + SG のみで接続制御。月額 $45 のコスト削減が主目的。
+- RDS DB Subnet Group が最低 2AZ を要求するため、実際に配置するのは 1a のみでもサブネットは 2 つ用意。
+- SG: kotoba-ecs は 3000/tcp のみ open（CloudFront origin）。kotoba-rds は kotoba-ecs SG からの 5432/tcp のみ許可。SG 名変更時の apply 失敗を防ぐため `lifecycle { create_before_destroy = true }` を両 SG に付与。
+
+**IAM 設計**
+- `data "aws_caller_identity"` で account_id を取得し、SSM ARN のワイルドカード (`*`) を排除。同一アカウント内でも明示的に account_id を指定するのが最小権限原則の観点で正しい。
+- GitHub OIDC の信頼条件を `repo:org/*` ではなく `kotoba-api` / `kotoba-web` の 2 リポジトリに限定。org 全体に AssumeRole を許可するのはセキュリティリスク。
+- ECR 権限を `GetAuthorizationToken`（Resource=`*` 必須, AWS 仕様）と push 系アクション（Resource=ECR ARN）に分離。まとめると push 権限が全 ECR リポジトリに広がるため分割が必要。
+- Lambda の ECS / RDS / CloudFront `Resource = "*"` はリソース ARN が PR 3〜4 で確定するため暫定。PR 5 (Lambda 実装) で絞り込む旨を TODO コメントで明示。
+
+**SSM**
+- `jwt_secret` / `gemini_api_key` を SecureString で保存。DB URL は RDS endpoint 依存のため PR 3、CloudFront distribution ID は PR 4 で追加予定。
+
 ## 2026-05-06
 
 ### bootstrap 追加レビュー指摘を修正

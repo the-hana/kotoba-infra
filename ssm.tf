@@ -1,0 +1,19 @@
+# JWT シークレットと Gemini API キーを SSM Parameter Store に保存
+# DB URL → rds.tf (PR 3) で追加予定
+# CloudFront distribution ID → cloudfront.tf (PR 4) で追加予定
+
+resource "aws_ssm_parameter" "jwt_secret" {
+  name  = "/kotoba-ai/jwt_secret"
+  type  = "SecureString"
+  value = var.jwt_secret
+
+  tags = local.common_tags
+}
+
+resource "aws_ssm_parameter" "gemini_api_key" {
+  name  = "/kotoba-ai/gemini_api_key"
+  type  = "SecureString"
+  value = var.gemini_api_key
+
+  tags = local.common_tags
+}
