@@ -32,3 +32,15 @@ variable "github_org" {
   type        = string
   default     = "butahana"
 }
+
+variable "db_name" {
+  description = "RDS PostgreSQL データベース名"
+  type        = string
+  default     = "kotoba_production"
+}
+
+variable "db_username" {
+  description = "RDS PostgreSQL ユーザー名"
+  type        = string
+  default     = "kotoba"
+}

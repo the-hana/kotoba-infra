@@ -1,5 +1,5 @@
 # JWT シークレットと Gemini API キーを SSM Parameter Store に保存
-# DB URL → rds.tf (PR 3) で追加予定
+# DB URL → rds.tf で管理
 # CloudFront distribution ID → cloudfront.tf (PR 4) で追加予定
 
 resource "aws_ssm_parameter" "jwt_secret" {
