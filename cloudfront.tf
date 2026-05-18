@@ -129,6 +129,12 @@ resource "aws_cloudfront_distribution" "main" {
     cloudfront_default_certificate = true
   }
 
+  # Lambda(cf_origin_updater) が EC2 再起動時に origin を API で直接更新するため、
+  # terraform apply で初期 IP に戻されないよう ignore する
+  lifecycle {
+    ignore_changes = [origin]
+  }
+
   tags = local.common_tags
 }
 
