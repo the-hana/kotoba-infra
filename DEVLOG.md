@@ -1,5 +1,28 @@
 # DEVLOG — kotoba-infra
 
+## 2026-05-18
+
+### S3 + CloudFront フロントエンド配信を追加 (PR 4)
+
+- `s3_frontend.tf`: kotoba-web 静的ホスティング用 S3 バケット + OAC + バケットポリシー
+- `cloudfront.tf`: CloudFront Distribution (S3 + EC2 の 2 Origin 構成) + SSM cf_distribution_id
+- `outputs.tf`: cloudfront_domain_name / cloudfront_distribution_id / s3_frontend_bucket
+
+**CloudFront 設計**
+- Default Behavior `/*` → S3 (React SPA)。`/api/*` と `/webhooks/*` → EC2:3000 (HTTP) に分岐。
+- CloudFront が HTTPS プロキシとなり EC2 の HTTP を隠蔽。Mixed Content 問題を解消。
+- SPA の React Router 対応: S3 が返す 403/404 をすべて `index.html` にリダイレクト (custom_error_response)。
+- PriceClass_200 (アジア + US + EU)。CloudFront ログは S3 ストレージコスト増につき無効化。
+
+**OAC 採用理由**
+- 旧来の OAI (Origin Access Identity) より権限制御が精細で、AWS 推奨の新方式。
+- S3 バケットポリシーに `aws:SourceArn` 条件を付与し、自 Distribution のみアクセス可能にした。
+
+**EC2 origin の IP 管理**
+- EC2 は Elastic IP 未使用のため再起動で IP が変わる。Terraform apply 時は `aws_instance.ecs.public_ip` で初期値を設定。
+- 以降の IP 変更は PR 5 で実装する Lambda (cf_origin_updater) が自動更新する。
+- Lambda が参照できるよう Distribution ID を SSM `/kotoba-ai/cf_distribution_id` に保存。
+
 ## 2026-05-13
 
 ### メイン Terraform 基盤ファイル群を追加 (PR 2)
