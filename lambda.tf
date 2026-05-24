@@ -68,7 +68,7 @@ resource "aws_cloudwatch_log_group" "lambda_cf_origin_updater" {
 
 # ──────────────────────────────────────────
 # Lambda: daily_story
-# SQS トリガー → Rails webhook POST → スト生成
+# SQS トリガー → Rails webhook POST → ストーリー生成
 # ──────────────────────────────────────────
 resource "aws_lambda_function" "daily_story" {
   function_name = "kotoba-daily-story"

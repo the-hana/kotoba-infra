@@ -15,7 +15,7 @@ resource "aws_sqs_queue" "daily_story_dlq" {
 # メインキュー
 resource "aws_sqs_queue" "daily_story" {
   name                      = "kotoba-daily-story"
-  visibility_timeout_seconds = 60 # Lambda timeout(30s) より長く設定
+  visibility_timeout_seconds = 180 # Lambda timeout(30s) × 6 (AWS 推奨値)
   message_retention_seconds = 86400
 
   tags = local.common_tags
