@@ -100,8 +100,8 @@ resource "aws_cloudwatch_event_rule" "cf_origin_update" {
     source        = ["aws.ec2"]
     "detail-type" = ["EC2 Instance State-change Notification"]
     detail = {
-      state       = ["running"]
-      instance-id = [aws_instance.ecs.id]
+      state         = ["running"]
+      "instance-id" = [aws_instance.ecs.id]
     }
   })
 
