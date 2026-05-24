@@ -1,5 +1,25 @@
 # DEVLOG — kotoba-infra
 
+## 2026-05-24
+
+### AI パイプライン実装 (PR 5)
+
+- `lambda/` ディレクトリ + Python 3.12 Lambda × 5
+- `sqs.tf`: daily_story キュー + DLQ (MaxReceiveCount=3)
+- `lambda.tf`: Lambda × 5 + archive_file + CloudWatch Log Group × 5
+- `eventbridge.tf`: EventBridge Rule × 5 (スケジュール + イベントパターン)
+- `cloudwatch.tf`: DLQ アラーム + SNS メール通知
+- `iam.tf`: Lambda policy の Resource を実 ARN に絞り込み (TODO 解決)
+
+**Lambda 設計方針**
+- `daily_story`: SQS トリガー → Rails webhook POST。Gemini 呼び出しと DB 保存は Rails 側に委譲。Lambda をステートレスに保ち、ビジネスロジックを API サーバーに集約。
+- `rds_stop`: RDS-EVENT-0088 (AWS が 7 日後に自動起動) を捕捉して即停止。Free Tier の RDS 自動起動問題への対処。
+- `ec2_stop` / `ec2_start`: ECS desired_count を 0 ↔ 1 で切り替え (EC2 は停止しない)。深夜 (JST 03:00) に停止、朝 (JST 09:00) に再開。
+- `cf_origin_updater`: EC2 running イベントの payload から instance-id を取得し、新しいパブリック IP を CloudFront origin に直接書き込む。SSM から distribution ID を取得することで Terraform state に依存しない実装。
+
+**IAM 最小権限化**
+- Lambda の ECS / RDS / CloudFront 権限の Resource を `"*"` から実 ARN に変更。PR 2 の TODO コメントを全て解決。
+
 ## 2026-05-18
 
 ### S3 + CloudFront フロントエンド配信を追加 (PR 4)

@@ -96,24 +96,21 @@ resource "aws_iam_role_policy" "lambda_services" {
       },
       {
         # ECS: ec2_stop / ec2_start Lambda が desired_count を更新
-        # TODO(PR 5): ECS クラスター/サービス ARN が確定したら Resource を絞ること
         Effect   = "Allow"
         Action   = ["ecs:UpdateService", "ecs:DescribeServices"]
-        Resource = "*"
+        Resource = [aws_ecs_service.api.id]
       },
       {
         # RDS: rds_stop Lambda が DB インスタンスを停止
-        # TODO(PR 5): RDS インスタンス ARN が確定したら Resource を絞ること
         Effect   = "Allow"
         Action   = ["rds:StopDBInstance", "rds:DescribeDBInstances"]
-        Resource = "*"
+        Resource = [aws_db_instance.main.arn]
       },
       {
         # CloudFront: cf_origin_updater Lambda が origin を更新
-        # TODO(PR 5): CloudFront distribution ARN が確定したら Resource を絞ること
         Effect   = "Allow"
         Action   = ["cloudfront:GetDistribution", "cloudfront:UpdateDistribution"]
-        Resource = "*"
+        Resource = [aws_cloudfront_distribution.main.arn]
       },
       {
         # EC2: cf_origin_updater Lambda が新しいパブリック IP を取得
