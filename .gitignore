@@ -13,3 +13,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 # .terraform.lock.hcl はコミット対象（Provider バージョン固定）
+
+# Lambda build artifacts
+lambda/*.zip
