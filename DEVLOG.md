@@ -1,5 +1,24 @@
 # DEVLOG — kotoba-infra
 
+## 2026-05-27
+
+### CD パイプライン実装 (PR 6)
+
+- `outputs.tf`: ECR / ECS / IAM outputs 追加 (3 → 7個)
+  - `ecr_repository_url`: GitHub Actions の docker push 先
+  - `ecs_cluster_name` / `ecs_service_name`: ECS サービス更新用
+  - `github_actions_role_arn`: GitHub Secrets `AWS_ROLE_ARN` の設定値
+- `kotoba-api/.github/workflows/deploy.yml`: ECR build/push → ECS Task Definition 更新 → ECS deploy
+  - `workflow_run` トリガー: CI 成功後のみ実行 (CI 失敗時は deploy をスキップ)
+  - `:sha` と `:latest` の2タグを同時 push、`:latest` を次回ビルドの Docker layer cache として活用
+  - `wait-for-service-stability: false`: t2.micro 1台構成で安定化待機が意味をなさないため
+  - OIDC 認証 (Secrets 1個: `AWS_ROLE_ARN`)
+- `kotoba-web/.github/workflows/deploy.yml`: pnpm build → S3 sync (2段階) → CloudFront invalidation
+  - `VITE_API_BASE_URL` を Secrets から注入 (未設定だとビルド後の API 接続が全て失敗するため)
+  - 静的アセット (JS/CSS/画像): `immutable` キャッシュ (Vite が hash 付きファイル名を生成)
+  - `index.html` / JSON: `no-cache` (常に最新バージョンを取得)
+  - OIDC 認証 (Secrets 4個: `AWS_ROLE_ARN`, `S3_BUCKET`, `CF_DISTRIBUTION_ID`, `VITE_API_BASE_URL`)
+
 ## 2026-05-24
 
 ### AI パイプライン実装 (PR 5)
