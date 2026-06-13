@@ -5,7 +5,8 @@
 #
 # 1. aws configure (新 Account の Access Key で再設定)
 #
-# 2. bootstrap/terraform.tfvars の tfstate_bucket_name suffix を新 Account ID 下6桁に変更
+# 2. cp bootstrap/terraform.tfvars.example bootstrap/terraform.tfvars
+#    → tfstate_bucket_name の suffix を新 Account ID 下6桁に変更
 #    例: kotoba-ai-tfstate-XXXXXX → kotoba-ai-tfstate-123456
 #
 # 3. backend.tf の bucket も同じ名前に変更
@@ -68,10 +69,10 @@ echo "  VITE_API_BASE_URL:  https://$CF_DOMAIN"
 echo ""
 
 # ── GitHub Secrets 更新 ────────────────────────────────────
-gh secret set AWS_ROLE_ARN       --body "$ROLE_ARN"          --repo the-hana/kotoba-api
-gh secret set AWS_ROLE_ARN       --body "$ROLE_ARN"          --repo the-hana/kotoba-web
-gh secret set S3_BUCKET          --body "$S3_BUCKET"         --repo the-hana/kotoba-web
-gh secret set CF_DISTRIBUTION_ID --body "$CF_ID"             --repo the-hana/kotoba-web
-gh secret set VITE_API_BASE_URL  --body "https://$CF_DOMAIN" --repo the-hana/kotoba-web
+echo "$ROLE_ARN"          | gh secret set AWS_ROLE_ARN       --repo the-hana/kotoba-api
+echo "$ROLE_ARN"          | gh secret set AWS_ROLE_ARN       --repo the-hana/kotoba-web
+echo "$S3_BUCKET"         | gh secret set S3_BUCKET          --repo the-hana/kotoba-web
+echo "$CF_ID"             | gh secret set CF_DISTRIBUTION_ID --repo the-hana/kotoba-web
+echo "https://$CF_DOMAIN" | gh secret set VITE_API_BASE_URL  --repo the-hana/kotoba-web
 
 echo "GitHub Secrets の更新が完了しました。"
