@@ -10,7 +10,7 @@
 - 稼働時間を **JST 18:00–24:00 (6時間/日)** に変更 → 変更後の予想コスト: 約$62/6ヶ月 (バッファ$138)
 - `ec2_stop.py`: ECS サービス停止に加え EC2 インスタンス停止・RDS 停止を追加
 - `ec2_start.py`: RDS 起動 → EC2 起動 → ECS desired_count=1 の順に変更 (RDS を先行起動してコンテナ起動時の DB 接続待機を短縮)
-- `rds_stop.py`: JST 19:00–22:59 (運営時間帯) は停止しないガード追加 (ec2_start によるスケジュール起動を rds_stop が即座に打ち消す問題を防止)
+- `rds_stop.py`: JST 18:00–23:59 (運営時間帯) は停止しないガード追加 (ec2_start によるスケジュール起動を rds_stop が即座に打ち消す問題を防止)
 - `lambda.tf`: ec2_stop・ec2_start に EC2_INSTANCE_ID・RDS_INSTANCE_ID 環境変数を追加
 - `iam.tf`: Lambda ロールに ec2:StopInstances, ec2:StartInstances, rds:StartDBInstance を追加
 - `ecs.tf`: EC2 root EBS を AMI デフォルト 30GB → 8GB に削減 (コスト削減 + 必要容量的に十分)
