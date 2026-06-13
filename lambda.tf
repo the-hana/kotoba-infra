@@ -127,7 +127,7 @@ resource "aws_lambda_function" "rds_stop" {
 
 # ──────────────────────────────────────────
 # Lambda: ec2_stop
-# JST 03:00 → ECS desired_count=0
+# JST 00:00 → ECS desired_count=0 + EC2・RDS 停止
 # ──────────────────────────────────────────
 resource "aws_lambda_function" "ec2_stop" {
   function_name = "kotoba-ec2-stop"
@@ -142,8 +142,10 @@ resource "aws_lambda_function" "ec2_stop" {
 
   environment {
     variables = {
-      ECS_CLUSTER = aws_ecs_cluster.main.name
-      ECS_SERVICE = aws_ecs_service.api.name
+      ECS_CLUSTER     = aws_ecs_cluster.main.name
+      ECS_SERVICE     = aws_ecs_service.api.name
+      EC2_INSTANCE_ID = aws_instance.ecs.id
+      RDS_INSTANCE_ID = aws_db_instance.main.identifier
     }
   }
 
@@ -154,14 +156,15 @@ resource "aws_lambda_function" "ec2_stop" {
 
 # ──────────────────────────────────────────
 # Lambda: ec2_start
-# JST 09:00 → ECS desired_count=1
+# JST 18:00 → RDS 起動待機 → ECS desired_count=1
+# RDS waiter が最大 10 分待機するため timeout=660 (11 分)
 # ──────────────────────────────────────────
 resource "aws_lambda_function" "ec2_start" {
   function_name = "kotoba-ec2-start"
   role          = aws_iam_role.lambda.arn
   runtime       = "python3.12"
   handler       = "ec2_start.handler"
-  timeout       = 30
+  timeout       = 660
   memory_size   = 128
 
   filename         = data.archive_file.ec2_start.output_path
@@ -169,8 +172,10 @@ resource "aws_lambda_function" "ec2_start" {
 
   environment {
     variables = {
-      ECS_CLUSTER = aws_ecs_cluster.main.name
-      ECS_SERVICE = aws_ecs_service.api.name
+      ECS_CLUSTER     = aws_ecs_cluster.main.name
+      ECS_SERVICE     = aws_ecs_service.api.name
+      EC2_INSTANCE_ID = aws_instance.ecs.id
+      RDS_INSTANCE_ID = aws_db_instance.main.identifier
     }
   }
 

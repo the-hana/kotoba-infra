@@ -92,7 +92,7 @@ resource "aws_iam_role_policy" "lambda_services" {
         # SQS: daily_story キューからメッセージ受信
         Effect   = "Allow"
         Action   = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
-        Resource = "arn:aws:sqs:${var.aws_region}:*:kotoba-*"
+        Resource = [aws_sqs_queue.daily_story.arn]
       },
       {
         # ECS: ec2_stop / ec2_start Lambda が desired_count を更新
@@ -101,10 +101,16 @@ resource "aws_iam_role_policy" "lambda_services" {
         Resource = [aws_ecs_service.api.id]
       },
       {
-        # RDS: rds_stop Lambda が DB インスタンスを停止
+        # RDS: rds_stop Lambda が DB インスタンスを停止、ec2_start Lambda が起動
         Effect   = "Allow"
-        Action   = ["rds:StopDBInstance", "rds:DescribeDBInstances"]
+        Action   = ["rds:StopDBInstance", "rds:StartDBInstance", "rds:DescribeDBInstances"]
         Resource = [aws_db_instance.main.arn]
+      },
+      {
+        # EC2: ec2_stop / ec2_start Lambda が EC2 インスタンスを起動・停止
+        Effect   = "Allow"
+        Action   = ["ec2:StopInstances", "ec2:StartInstances"]
+        Resource = "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:instance/${aws_instance.ecs.id}"
       },
       {
         # CloudFront: cf_origin_updater Lambda が origin を更新

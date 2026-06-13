@@ -132,6 +132,18 @@ resource "aws_instance" "ecs" {
   vpc_security_group_ids = [aws_security_group.ecs.id]
   iam_instance_profile   = aws_iam_instance_profile.ecs.name
 
+  root_block_device {
+    volume_type = "gp3"
+    volume_size = 8
+  }
+
+  # root_block_device の変更は EC2 の destroy-recreate を引き起こす。
+  # 6ヶ月ごとの新規アカウント再デプロイ運用のため変更機会はないが、
+  # 誤った spec 変更による意図しない再作成を防ぐためにここで固定する。
+  lifecycle {
+    ignore_changes = [root_block_device]
+  }
+
   user_data = base64encode(<<-EOT
     #!/bin/bash
     set -e
