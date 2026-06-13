@@ -1,17 +1,17 @@
 # ──────────────────────────────────────────
 # EventBridge Rules × 5
 #
-# 1. kotoba-daily-story-trigger  cron UTC 15:00 (JST 00:00) → SQS
+# 1. kotoba-daily-story-trigger  cron UTC 10:10 (JST 19:10) → SQS   ★変更: サーバー起動10分後
 # 2. kotoba-rds-auto-stop        RDS-EVENT-0088 (DB起動)    → Lambda rds_stop
-# 3. kotoba-ec2-auto-stop        cron UTC 18:00 (JST 03:00) → Lambda ec2_stop
-# 4. kotoba-ec2-auto-start       cron UTC 00:00 (JST 09:00) → Lambda ec2_start
+# 3. kotoba-ec2-auto-stop        cron UTC 14:00 (JST 23:00) → Lambda ec2_stop  ★変更
+# 4. kotoba-ec2-auto-start       cron UTC 10:00 (JST 19:00) → Lambda ec2_start ★変更
 # 5. kotoba-cf-origin-update     EC2 state=running          → Lambda cf_origin_updater
 # ──────────────────────────────────────────
 
 # ── 1. Daily story trigger ───────────────
 resource "aws_cloudwatch_event_rule" "daily_story_trigger" {
   name                = "kotoba-daily-story-trigger"
-  schedule_expression = "cron(0 15 * * ? *)"
+  schedule_expression = "cron(10 10 * * ? *)"  # JST 19:10 — サーバー起動(19:00)の10分後
   tags                = local.common_tags
 }
 
@@ -51,10 +51,10 @@ resource "aws_lambda_permission" "rds_auto_stop" {
   source_arn    = aws_cloudwatch_event_rule.rds_auto_stop.arn
 }
 
-# ── 3. ECS 停止 (JST 03:00) ──────────────
+# ── 3. EC2・RDS 停止 (JST 23:00) ─────────
 resource "aws_cloudwatch_event_rule" "ec2_auto_stop" {
   name                = "kotoba-ec2-auto-stop"
-  schedule_expression = "cron(0 18 * * ? *)"
+  schedule_expression = "cron(0 14 * * ? *)"  # JST 23:00
   tags                = local.common_tags
 }
 
@@ -71,10 +71,10 @@ resource "aws_lambda_permission" "ec2_auto_stop" {
   source_arn    = aws_cloudwatch_event_rule.ec2_auto_stop.arn
 }
 
-# ── 4. ECS 起動 (JST 09:00) ──────────────
+# ── 4. EC2・RDS 起動 (JST 19:00) ─────────
 resource "aws_cloudwatch_event_rule" "ec2_auto_start" {
   name                = "kotoba-ec2-auto-start"
-  schedule_expression = "cron(0 0 * * ? *)"
+  schedule_expression = "cron(0 10 * * ? *)"  # JST 19:00
   tags                = local.common_tags
 }
 

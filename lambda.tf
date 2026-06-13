@@ -142,8 +142,10 @@ resource "aws_lambda_function" "ec2_stop" {
 
   environment {
     variables = {
-      ECS_CLUSTER = aws_ecs_cluster.main.name
-      ECS_SERVICE = aws_ecs_service.api.name
+      ECS_CLUSTER     = aws_ecs_cluster.main.name
+      ECS_SERVICE     = aws_ecs_service.api.name
+      EC2_INSTANCE_ID = aws_instance.ecs.id
+      RDS_INSTANCE_ID = aws_db_instance.main.identifier
     }
   }
 
@@ -169,8 +171,10 @@ resource "aws_lambda_function" "ec2_start" {
 
   environment {
     variables = {
-      ECS_CLUSTER = aws_ecs_cluster.main.name
-      ECS_SERVICE = aws_ecs_service.api.name
+      ECS_CLUSTER     = aws_ecs_cluster.main.name
+      ECS_SERVICE     = aws_ecs_service.api.name
+      EC2_INSTANCE_ID = aws_instance.ecs.id
+      RDS_INSTANCE_ID = aws_db_instance.main.identifier
     }
   }
 

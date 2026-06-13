@@ -1,5 +1,23 @@
 # DEVLOG — kotoba-infra
 
+## 2026-06-14
+
+### AWS Starter プランへの対応 — インフラコスト再設計
+
+- AWSプランが「Free Tier 12ヶ月」→「Starter プラン ($200クレジット / 6ヶ月)」に変更
+- 変更前の予想コスト: 約$188/6ヶ月 (バッファ$12、危険水域)
+  - 根本原因: ec2_stop/ec2_start Lambda は ECS desired_count のみ変更しており、EC2・RDS インスタンス自体は 24/7 稼働していた
+- 稼働時間を **JST 19:00–23:00 (4時間/日)** に変更 → 変更後の予想コスト: 約$50/6ヶ月 (バッファ$150)
+- `ec2_stop.py`: ECS サービス停止に加え EC2 インスタンス停止・RDS 停止を追加
+- `ec2_start.py`: RDS 起動 → EC2 起動 → ECS desired_count=1 の順に変更 (RDS を先行起動してコンテナ起動時の DB 接続待機を短縮)
+- `rds_stop.py`: JST 19:00–22:59 (運営時間帯) は停止しないガード追加 (ec2_start によるスケジュール起動を rds_stop が即座に打ち消す問題を防止)
+- `lambda.tf`: ec2_stop・ec2_start に EC2_INSTANCE_ID・RDS_INSTANCE_ID 環境変数を追加
+- `iam.tf`: Lambda ロールに ec2:StopInstances, ec2:StartInstances, rds:StartDBInstance を追加
+- `ecs.tf`: EC2 root EBS を AMI デフォルト 30GB → 8GB に削減 (コスト削減 + 必要容量的に十分)
+- `eventbridge.tf`: EC2 起動を JST 09:00→19:00、停止を JST 03:00→23:00 に変更
+  - daily_story トリガーを JST 00:00→19:10 に変更 (サーバー起動10分後、稼働時間外だと webhook 失敗するため)
+- `budgets.tf` 新規追加: AWS Budgets で月$35 の 50%/80% アラート (CloudWatch 請求アラートは us-east-1 専用のため Budgets を採用)
+
 ## 2026-06-13
 
 ### 再デプロイ自動化スクリプト追加

@@ -132,6 +132,11 @@ resource "aws_instance" "ecs" {
   vpc_security_group_ids = [aws_security_group.ecs.id]
   iam_instance_profile   = aws_iam_instance_profile.ecs.name
 
+  root_block_device {
+    volume_type = "gp3"
+    volume_size = 8
+  }
+
   user_data = base64encode(<<-EOT
     #!/bin/bash
     set -e
