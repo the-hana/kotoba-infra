@@ -92,7 +92,7 @@ resource "aws_iam_role_policy" "lambda_services" {
         # SQS: daily_story キューからメッセージ受信
         Effect   = "Allow"
         Action   = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
-        Resource = "arn:aws:sqs:${var.aws_region}:*:kotoba-*"
+        Resource = [aws_sqs_queue.daily_story.arn]
       },
       {
         # ECS: ec2_stop / ec2_start Lambda が desired_count を更新

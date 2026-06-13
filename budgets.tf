@@ -10,6 +10,11 @@ resource "aws_budgets_budget" "monthly" {
   limit_unit   = "USD"
   time_unit    = "MONTHLY"
 
+  # クレジット適用後の純コストは $0 になりアラートが発火しないため、クレジットを除外して実消費量を追跡する
+  cost_types {
+    include_credit = false
+  }
+
   notification {
     comparison_operator        = "GREATER_THAN"
     threshold                  = 50
