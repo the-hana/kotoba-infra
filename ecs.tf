@@ -137,6 +137,13 @@ resource "aws_instance" "ecs" {
     volume_size = 8
   }
 
+  # root_block_device の変更は EC2 の destroy-recreate を引き起こす。
+  # 6ヶ月ごとの新規アカウント再デプロイ運用のため変更機会はないが、
+  # 誤った spec 変更による意図しない再作成を防ぐためにここで固定する。
+  lifecycle {
+    ignore_changes = [root_block_device]
+  }
+
   user_data = base64encode(<<-EOT
     #!/bin/bash
     set -e

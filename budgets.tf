@@ -6,7 +6,7 @@
 resource "aws_budgets_budget" "monthly" {
   name         = "kotoba-ai-monthly"
   budget_type  = "COST"
-  limit_amount = "35"
+  limit_amount = "33"
   limit_unit   = "USD"
   time_unit    = "MONTHLY"
 

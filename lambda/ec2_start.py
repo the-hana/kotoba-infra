@@ -1,5 +1,6 @@
 import boto3
 import os
+from botocore.exceptions import ClientError
 
 
 def handler(event, context):
@@ -12,7 +13,10 @@ def handler(event, context):
         rds.start_db_instance(DBInstanceIdentifier=os.environ["RDS_INSTANCE_ID"])
     except rds.exceptions.InvalidDBInstanceStateFault:
         pass  # すでに起動中
-    ec2.start_instances(InstanceIds=[os.environ["EC2_INSTANCE_ID"]])
+    try:
+        ec2.start_instances(InstanceIds=[os.environ["EC2_INSTANCE_ID"]])
+    except ClientError:
+        pass  # 遷移状態 (stopping/pending/terminated) またはすでに起動中
     ecs.update_service(
         cluster=os.environ["ECS_CLUSTER"],
         service=os.environ["ECS_SERVICE"],
