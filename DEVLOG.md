@@ -1,5 +1,15 @@
 # DEVLOG — kotoba-infra
 
+## 2026-06-13
+
+### 再デプロイ自動化スクリプト追加
+
+- `scripts/setup.sh` を追加
+- `terraform apply` 後に実行すると、`terraform output` から値を取得して GitHub Secrets (kotoba-api / kotoba-web) を自動更新
+- 対象 Secrets: `AWS_ROLE_ARN`, `S3_BUCKET`, `CF_DISTRIBUTION_ID`, `VITE_API_BASE_URL`
+- スクリプト上部にアカウント解約後の再デプロイ手順 (7ステップ) をコメントで記載
+- 背景: 無料プランでは6ヶ月後にアカウント解約される。再デプロイ時に4つの GitHub Secrets を手動更新する手間を省くため。
+
 ## 2026-05-27
 
 ### CD パイプライン実装 (PR 6)
