@@ -4,6 +4,7 @@
 # 【再デプロイ手順 (アカウント解約後の新規アカウントで実行)】
 #
 # 1. aws configure (新 Account の Access Key で再設定)
+#    gh auth login (gh CLI 認証が未完了の場合)
 #
 # 2. cp bootstrap/terraform.tfvars.example bootstrap/terraform.tfvars
 #    → tfstate_bucket_name の suffix を新 Account ID 下6桁に変更
@@ -15,6 +16,8 @@
 # 4. cd bootstrap && terraform init && terraform apply
 #
 # 5. cd .. && terraform init && terraform plan && terraform apply
+#    ※ 初回は jwt_secret / gemini_api_key の入力を求められる
+#      terraform.tfvars に設定するか -var で渡すこと
 #
 # 6. bash scripts/setup.sh   ← このスクリプト
 #
