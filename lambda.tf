@@ -127,7 +127,7 @@ resource "aws_lambda_function" "rds_stop" {
 
 # ──────────────────────────────────────────
 # Lambda: ec2_stop
-# JST 03:00 → ECS desired_count=0
+# JST 00:00 → ECS desired_count=0 + EC2・RDS 停止
 # ──────────────────────────────────────────
 resource "aws_lambda_function" "ec2_stop" {
   function_name = "kotoba-ec2-stop"
