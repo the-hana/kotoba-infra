@@ -13,8 +13,7 @@ def handler(event, context):
         print(f"No public DNS for {instance_id}, skipping")
         return
 
-    ssm = boto3.client("ssm")
-    dist_id = ssm.get_parameter(Name=os.environ["CF_DIST_ID_PARAM"])["Parameter"]["Value"]
+    dist_id = os.environ["CF_DISTRIBUTION_ID"]
 
     cf = boto3.client("cloudfront")
     resp = cf.get_distribution_config(Id=dist_id)
