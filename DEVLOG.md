@@ -2,6 +2,15 @@
 
 ## 2026-06-14
 
+### 初回デプロイ時に発覚したバグ修正
+
+- `ecs.tf`: `instance_type` を `t2.micro` → `t3.micro` に変更 (ap-northeast-1 では t2.micro が Free Tier 非対象)
+- `ecs.tf`: EBS `volume_size` を 8GB → 30GB に変更 (ECS 最適化 AMI のスナップショット最小要件 30GB)
+- `cloudfront.tf`: EC2 origin の `domain_name` を `public_ip` → `public_dns` に変更 (CloudFront は IP アドレスを origin に指定不可)
+- `lambda/cf_origin_updater.py`: `PublicIpAddress` → `PublicDnsName` を取得するよう変更 (cloudfront.tf の変更に対応)
+- `iam.tf`: Lambda の CloudFront 権限を `GetDistribution` → `GetDistributionConfig` に修正 (API 名不一致で cf_origin_updater が権限エラーになるバグ)
+- `backend.tf`: S3 バケット名をプレースホルダーから実際のバケット名に置換 (bootstrap apply 後に手動対応が必要な手順を踏まずに済むよう、今後は例示値を修正しておく)
+
 ### AWS Starter プランへの対応 — インフラコスト再設計
 
 - AWSプランが「Free Tier 12ヶ月」→「Starter プラン ($200クレジット / 6ヶ月)」に変更

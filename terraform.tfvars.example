@@ -11,3 +11,4 @@ alert_email    = "your@email.com"
 github_org     = "butahana"
 db_name        = "kotoba_production"
 db_username    = "kotoba"
+

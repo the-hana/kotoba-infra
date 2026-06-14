@@ -58,7 +58,7 @@ resource "aws_cloudfront_distribution" "main" {
   # ── Origin 2: EC2 Rails API ──────────────
   origin {
     origin_id   = "ec2-api"
-    domain_name = aws_instance.ecs.public_ip
+    domain_name = aws_instance.ecs.public_dns
 
     custom_origin_config {
       http_port              = 3000

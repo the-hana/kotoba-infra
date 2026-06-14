@@ -121,20 +121,20 @@ resource "aws_ecs_task_definition" "api" {
 
 # ──────────────────────────────────────────
 # EC2 Instance (ECS ホスト)
-# t2.micro Free Tier / public_a サブネット
+# t3.micro Free Tier / public_a サブネット
 # Elastic IP 不使用: 停止時 IP 自動解放で費用ゼロ
 # user_data: ECS_CLUSTER 登録 + swap 1.5GB + fstab 永続化
 # ──────────────────────────────────────────
 resource "aws_instance" "ecs" {
   ami                    = data.aws_ssm_parameter.ecs_ami.value
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public_a.id
   vpc_security_group_ids = [aws_security_group.ecs.id]
   iam_instance_profile   = aws_iam_instance_profile.ecs.name
 
   root_block_device {
     volume_type = "gp3"
-    volume_size = 8
+    volume_size = 30
   }
 
   # root_block_device の変更は EC2 の destroy-recreate を引き起こす。
@@ -152,7 +152,7 @@ resource "aws_instance" "ecs" {
     echo "ECS_CLUSTER=kotoba-api" >> /etc/ecs/ecs.config
     echo 'ECS_AVAILABLE_LOGGING_DRIVERS=["json-file","awslogs"]' >> /etc/ecs/ecs.config
 
-    # swap 1.5GB 作成 (t2.micro OOM 防止)
+    # swap 1.5GB 作成 (t3.micro OOM 防止)
     if [ ! -f /swapfile ]; then
       fallocate -l 1536M /swapfile
       chmod 600 /swapfile
@@ -168,7 +168,7 @@ resource "aws_instance" "ecs" {
 
 # ──────────────────────────────────────────
 # ECS Service
-# minimum_healthy_percent=0: t2.micro 1台での rolling update を可能にする
+# minimum_healthy_percent=0: t3.micro 1台での rolling update を可能にする
 # ──────────────────────────────────────────
 resource "aws_ecs_service" "api" {
   name            = "kotoba-api"

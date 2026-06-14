@@ -7,9 +7,10 @@ def handler(event, context):
 
     ec2 = boto3.client("ec2")
     resp = ec2.describe_instances(InstanceIds=[instance_id])
-    public_ip = resp["Reservations"][0]["Instances"][0].get("PublicIpAddress")
-    if not public_ip:
-        print(f"No public IP for {instance_id}, skipping")
+    instance = resp["Reservations"][0]["Instances"][0]
+    public_dns = instance.get("PublicDnsName")
+    if not public_dns:
+        print(f"No public DNS for {instance_id}, skipping")
         return
 
     ssm = boto3.client("ssm")
@@ -22,9 +23,9 @@ def handler(event, context):
 
     for origin in config["Origins"]["Items"]:
         if origin["Id"] == "ec2-api":
-            origin["DomainName"] = public_ip
+            origin["DomainName"] = public_dns
             break
 
     cf.update_distribution(DistributionConfig=config, Id=dist_id, IfMatch=etag)
-    print(f"Updated CF origin to {public_ip}")
-    return {"status": "updated", "ip": public_ip}
+    print(f"Updated CF origin to {public_dns}")
+    return {"status": "updated", "dns": public_dns}
