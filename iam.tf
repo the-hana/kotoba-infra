@@ -115,7 +115,7 @@ resource "aws_iam_role_policy" "lambda_services" {
       {
         # CloudFront: cf_origin_updater Lambda が origin を更新
         Effect   = "Allow"
-        Action   = ["cloudfront:GetDistribution", "cloudfront:UpdateDistribution"]
+        Action   = ["cloudfront:GetDistributionConfig", "cloudfront:UpdateDistribution"]
         Resource = [aws_cloudfront_distribution.main.arn]
       },
       {

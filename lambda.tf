@@ -201,7 +201,7 @@ resource "aws_lambda_function" "cf_origin_updater" {
 
   environment {
     variables = {
-      CF_DIST_ID_PARAM = aws_ssm_parameter.cf_distribution_id.name
+      CF_DISTRIBUTION_ID = aws_cloudfront_distribution.main.id
     }
   }
 
