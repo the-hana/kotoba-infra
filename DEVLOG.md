@@ -1,5 +1,15 @@
 # DEVLOG — kotoba-infra
 
+## 2026-06-26
+
+### 本番ECSコンテナ起動失敗の修正 (RAILS_MASTER_KEY / AMI lifecycle)
+
+- `ssm.tf`: `/kotoba-ai/secret_key_base` を廃止し `/kotoba-ai/rails_master_key` を新設
+  - `SECRET_KEY_BASE` 環境変数では Rails が `credentials.yml.enc` の復号を試みるため解決できなかった。`RAILS_MASTER_KEY` を渡して credentials を正常に復号する方式が正しい
+- `ecs.tf`: ECS task definition の secrets に `RAILS_MASTER_KEY` を追加
+- `ecs.tf`: `lifecycle.ignore_changes` に `ami` を追加
+  - ECS 最適化 AMI は定期更新されるため、`terraform apply` のたびに EC2 replace が発生する問題を防止。AMI 更新が必要な場合は `ignore_changes` を一時外して明示的に対応する運用にする
+
 ## 2026-06-14
 
 ### 初回デプロイ時に発覚したバグ修正
