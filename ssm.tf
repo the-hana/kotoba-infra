@@ -17,3 +17,11 @@ resource "aws_ssm_parameter" "gemini_api_key" {
 
   tags = local.common_tags
 }
+
+resource "aws_ssm_parameter" "rails_master_key" {
+  name  = "/kotoba-ai/rails_master_key"
+  type  = "SecureString"
+  value = var.rails_master_key
+
+  tags = local.common_tags
+}

@@ -22,6 +22,12 @@ variable "gemini_api_key" {
   sensitive   = true
 }
 
+variable "rails_master_key" {
+  description = "Rails RAILS_MASTER_KEY (config/master.key の内容)"
+  type        = string
+  sensitive   = true
+}
+
 variable "alert_email" {
   description = "CloudWatch Alarm 通知先メールアドレス"
   type        = string

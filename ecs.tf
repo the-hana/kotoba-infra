@@ -102,6 +102,10 @@ resource "aws_ecs_task_definition" "api" {
         {
           name      = "GEMINI_API_KEY"
           valueFrom = aws_ssm_parameter.gemini_api_key.arn
+        },
+        {
+          name      = "RAILS_MASTER_KEY"
+          valueFrom = aws_ssm_parameter.rails_master_key.arn
         }
       ]
 
@@ -137,11 +141,10 @@ resource "aws_instance" "ecs" {
     volume_size = 30
   }
 
-  # root_block_device の変更は EC2 の destroy-recreate を引き起こす。
-  # 6ヶ月ごとの新規アカウント再デプロイ運用のため変更機会はないが、
-  # 誤った spec 変更による意図しない再作成を防ぐためにここで固定する。
+  # ami: ECS最適化AMIは定期更新されるため ignore — 意図しない再作成を防ぐ
+  # root_block_device: spec変更による意図しない再作成を防ぐ
   lifecycle {
-    ignore_changes = [root_block_device]
+    ignore_changes = [ami, root_block_device]
   }
 
   user_data = base64encode(<<-EOT
