@@ -79,14 +79,13 @@ resource "aws_ecs_task_definition" "api" {
       memoryReservation = 512
 
       portMappings = [{
-        containerPort = 3000
-        hostPort      = 3000
+        containerPort = 80
+        hostPort      = 80
         protocol      = "tcp"
       }]
 
       environment = [
         { name = "RAILS_ENV",           value = "production" },
-        { name = "PORT",                value = "3000" },
         { name = "RAILS_LOG_TO_STDOUT", value = "true" }
       ]
 

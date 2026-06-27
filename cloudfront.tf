@@ -61,7 +61,7 @@ resource "aws_cloudfront_distribution" "main" {
     domain_name = aws_instance.ecs.public_dns
 
     custom_origin_config {
-      http_port              = 3000
+      http_port              = 80
       https_port             = 443
       origin_protocol_policy = "http-only"
       origin_ssl_protocols   = ["TLSv1.2"]
@@ -130,7 +130,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   # Lambda(cf_origin_updater) が EC2 再起動時に origin を API で直接更新するため、
-  # terraform apply で初期 IP に戻されないよう ignore する
+  # terraform apply で初期値に戻されないよう ignore する
   lifecycle {
     ignore_changes = [origin]
   }
