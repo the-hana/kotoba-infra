@@ -28,6 +28,12 @@ variable "rails_master_key" {
   sensitive   = true
 }
 
+variable "internal_api_key" {
+  description = "Lambda → Rails webhook 認証キー (INTERNAL_API_KEY)"
+  type        = string
+  sensitive   = true
+}
+
 variable "alert_email" {
   description = "CloudWatch Alarm 通知先メールアドレス"
   type        = string

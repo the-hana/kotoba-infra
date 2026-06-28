@@ -105,6 +105,10 @@ resource "aws_ecs_task_definition" "api" {
         {
           name      = "RAILS_MASTER_KEY"
           valueFrom = aws_ssm_parameter.rails_master_key.arn
+        },
+        {
+          name      = "INTERNAL_API_KEY"
+          valueFrom = aws_ssm_parameter.internal_api_key.arn
         }
       ]
 

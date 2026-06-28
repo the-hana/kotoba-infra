@@ -25,3 +25,11 @@ resource "aws_ssm_parameter" "rails_master_key" {
 
   tags = local.common_tags
 }
+
+resource "aws_ssm_parameter" "internal_api_key" {
+  name  = "/kotoba-ai/internal_api_key"
+  type  = "SecureString"
+  value = var.internal_api_key
+
+  tags = local.common_tags
+}

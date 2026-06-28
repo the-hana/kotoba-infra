@@ -1,5 +1,16 @@
 # DEVLOG — kotoba-infra
 
+## 2026-06-28
+
+### Lambda webhook に X-Internal-Token 認証を追加
+
+- Rails 側の `Webhooks::ApplicationController` が `X-Internal-Token` ヘッダーで認証するように変更されたことに対応
+- `INTERNAL_API_KEY` を SSM `/kotoba-ai/internal_api_key` に追加し、ECS (Rails) と Lambda の両方から共有する設計にした
+  - **設計判断**: Lambda の env vars に直接シークレット値を入れると Lambda コンソールで見えてしまう。Lambda は既に SSM 読み取り IAM 権限を持っているため、boto3 で実行時に SSM から取得する方式にした
+  - Lambda env vars には SSM パラメータ名 (`INTERNAL_API_KEY_PARAM`) だけを渡す。実値は実行時のみ取得
+- ECS は既存の SSM secrets injection パターンで `INTERNAL_API_KEY` を注入
+- `variables.tf`: `internal_api_key` 変数を追加
+
 ## 2026-06-26
 
 ### 本番ECSコンテナ起動失敗の修正 (RAILS_MASTER_KEY / AMI lifecycle)

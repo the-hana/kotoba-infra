@@ -83,7 +83,8 @@ resource "aws_lambda_function" "daily_story" {
 
   environment {
     variables = {
-      WEBHOOK_URL = "https://${aws_cloudfront_distribution.main.domain_name}/webhooks/daily_story"
+      WEBHOOK_URL              = "https://${aws_cloudfront_distribution.main.domain_name}/webhooks/daily_story"
+      INTERNAL_API_KEY_PARAM   = aws_ssm_parameter.internal_api_key.name
     }
   }
 
