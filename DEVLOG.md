@@ -1,5 +1,12 @@
 # DEVLOG — kotoba-infra
 
+## 2026-07-03
+
+### RDS backup_retention_period を Free Tier 対応に戻す
+
+- `backup_retention_period = 7` → `0` に戻す
+- セキュリティレビューで 0 → 7 に変更したが、Free Tier アカウントは RDS バックアップ非対応のため `FreeTierRestrictionError` でエラーになっていた
+
 ## 2026-06-28
 
 ### Lambda webhook に X-Internal-Token 認証を追加
