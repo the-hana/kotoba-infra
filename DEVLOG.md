@@ -7,6 +7,19 @@
 - `backup_retention_period = 7` → `0` に戻す
 - セキュリティレビューで 0 → 7 に変更したが、Free Tier アカウントは RDS バックアップ非対応のため `FreeTierRestrictionError` でエラーになっていた
 
+## 2026-06-27
+
+### Thruster のポートを全て HTTP 80 に統一
+
+- Thruster は port 80 で listen するが、ECS portMappings・CloudFront origin・Security Group が 3000 のままだったため本番で CloudFront 504 が発生していた
+- `ecs.tf` / `cloudfront.tf` / `networking.tf` の 3 ファイルを 80 に修正
+
+### RDS バックアップ保持期間を 7 日に設定
+
+- `backup_retention_period` を `0` → `7` に変更
+- `backup_retention_period=0` では DB インシデント時に復旧手段がないため、Free Tier 範囲内の 7 日に変更
+  - 後日 Free Tier アカウントでは RDS バックアップ自体が非対応と判明し、2026-07-03 に `0` へ再度戻すことになった
+
 ## 2026-06-28
 
 ### Lambda webhook に X-Internal-Token 認証を追加
