@@ -1,6 +1,6 @@
 # kotoba-infra
 
-[kotoba-ai](https://github.com/the-hana/kotoba-api) のAWSインフラをTerraformで管理するリポジトリ。
+kotoba-ai のAWSインフラをTerraformで管理するリポジトリ。
 ECS on EC2 + RDS + S3/CloudFront + AI非同期パイプラインを、AWS Free Tier内（$0）で構築している。
 
 関連リポジトリ: [kotoba-api](https://github.com/the-hana/kotoba-api)（Rails API） / [kotoba-web](https://github.com/the-hana/kotoba-web)（React フロントエンド）
