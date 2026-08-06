@@ -1,5 +1,13 @@
 # DEVLOG — kotoba-infra
 
+## 2026-08-06
+
+### README.md を terraform-docs で自動生成し全面刷新
+
+- `.terraform-docs.yml` を追加し、`terraform-docs markdown table --output-mode inject .` で Requirements / Providers / Resources / Inputs / Outputs を自動生成
+  - **設計判断**: Terraform 公式ツールでの自動生成が業界標準（`terraform-aws-modules` 系リポジトリが採用する形式）。手動更新だと `.tf` ファイルとドキュメントが乖離するため、コード変更時に `terraform-docs` 再実行で同期させる運用にした
+- README にアーキテクチャ図・設計判断のトレードオフ表・セットアップ手順・ディレクトリ構成を追記（ポートフォリオとして初見の読者に伝わることを意図）
+
 ## 2026-07-03
 
 ### RDS backup_retention_period を Free Tier 対応に戻す
